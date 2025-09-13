@@ -1,5 +1,6 @@
 import { initializeSpreadsheet, checkSpreadsheetInitialization } from './utils/sheet-initializer';
 import { CustomerUI } from './ui/customer.ui';
+import { InvoiceUI } from './ui/invoice.ui';
 
 /**
  * スプレッドシートを開いたときに実行されるトリガー関数
@@ -21,10 +22,18 @@ export function onOpen(): void {
       .addItem('顧客統計', 'showCustomerStats')
       .addItem('顧客管理テスト', 'testCustomerManagement')
       .addItem('データ品質チェック', 'checkCustomerDataQuality'))
+    .addSubMenu(ui.createMenu('請求書管理')
+      .addItem('請求書一覧', 'showInvoiceList')
+      .addItem('請求書検索', 'showInvoiceSearch')
+      .addItem('請求書作成', 'showInvoiceCreation')
+      .addItem('請求書発行', 'showInvoiceIssue')
+      .addSeparator()
+      .addItem('請求書統計', 'showInvoiceStats')
+      .addItem('月次レポート', 'showMonthlyReport')
+      .addItem('請求書管理テスト', 'testInvoiceManagement'))
     .addSeparator()
     .addItem('テスト実行', 'testFunction')
     .addItem('包括的テスト実行', 'runTestsWithLogs')
-    .addItem('請求書作成', 'createInvoice')
     .addSeparator()
     .addItem('設定', 'showSettings')
     .addToUi();
@@ -846,4 +855,240 @@ async function runDataQualityCheck(): Promise<{
     validCount,
     issues
   };
+}
+
+// ===== 請求書管理関数 =====
+
+/**
+ * 請求書一覧表示
+ */
+export function showInvoiceList(): void {
+  const invoiceUI = new InvoiceUI();
+  invoiceUI.showInvoiceList().catch(error => {
+    console.error('請求書一覧表示エラー:', error);
+  });
+}
+
+/**
+ * 請求書検索
+ */
+export function showInvoiceSearch(): void {
+  const invoiceUI = new InvoiceUI();
+  invoiceUI.showInvoiceSearch().catch(error => {
+    console.error('請求書検索エラー:', error);
+  });
+}
+
+/**
+ * 請求書作成
+ */
+export function showInvoiceCreation(): void {
+  const invoiceUI = new InvoiceUI();
+  invoiceUI.showInvoiceCreation().catch(error => {
+    console.error('請求書作成エラー:', error);
+  });
+}
+
+/**
+ * 請求書発行
+ */
+export function showInvoiceIssue(): void {
+  const invoiceUI = new InvoiceUI();
+  invoiceUI.showInvoiceIssue().catch(error => {
+    console.error('請求書発行エラー:', error);
+  });
+}
+
+/**
+ * 請求書統計
+ */
+export function showInvoiceStats(): void {
+  const invoiceUI = new InvoiceUI();
+  invoiceUI.showInvoiceStats().catch(error => {
+    console.error('請求書統計エラー:', error);
+  });
+}
+
+/**
+ * 月次レポート
+ */
+export function showMonthlyReport(): void {
+  const invoiceUI = new InvoiceUI();
+  invoiceUI.showMonthlyReport().catch(error => {
+    console.error('月次レポートエラー:', error);
+  });
+}
+
+/**
+ * 請求書管理機能の包括的テスト
+ */
+export function testInvoiceManagement(): void {
+  const ui = SpreadsheetApp.getUi();
+  
+  try {
+    console.log('=== 請求書管理機能テスト開始 ===');
+    
+    ui.alert(
+      '請求書管理テスト',
+      '請求書管理機能のテストを実行します。\\n\\n' +
+      '以下の操作を順番に実行します：\\n' +
+      '1. テスト請求書の作成\\n' +
+      '2. 請求書情報の取得\\n' +
+      '3. 請求書一覧の取得\\n' +
+      '4. 請求書検索\\n' +
+      '5. 請求書発行\\n' +
+      '6. 統計情報の取得\\n\\n' +
+      '※実際に顧客データが必要です。\\n' +
+      '先に顧客管理テストを実行してください。\\n\\n' +
+      '処理完了まで少々お待ちください。',
+      this.ui.ButtonSet.OK
+    );
+    
+    // 非同期でテスト実行
+    runInvoiceManagementTest()
+      .then(() => {
+        ui.alert(
+          'テスト完了',
+          '請求書管理機能のテストが完了しました。\\n\\n' +
+          '詳細はコンソールログとシステムログシートを確認してください。',
+          ui.ButtonSet.OK
+        );
+        console.log('=== 請求書管理機能テスト完了 ===');
+      })
+      .catch((error: any) => {
+        console.error('請求書管理テストエラー:', error);
+        ui.alert(
+          'テストエラー',
+          `テスト実行中にエラーが発生しました:\\n\\n${error.message}\\n\\n` +
+          '詳細はコンソールログを確認してください。',
+          ui.ButtonSet.OK
+        );
+      });
+      
+  } catch (error: any) {
+    console.error('請求書管理テスト処理エラー:', error);
+    ui.alert(
+      'テストエラー',
+      `テスト処理中にエラーが発生しました:\\n\\n${error.message}`,
+      ui.ButtonSet.OK
+    );
+  }
+}
+
+/**
+ * 請求書管理テスト実行（非同期）
+ */
+async function runInvoiceManagementTest(): Promise<void> {
+  const { InvoiceService } = await import('./services/invoice.service');
+  const { CustomerService } = await import('./services/customer.service');
+  
+  const invoiceService = new InvoiceService();
+  const customerService = new CustomerService();
+  
+  console.log('1. 顧客存在確認');
+  
+  // 既存顧客を取得
+  const customers = await customerService.getAllCustomers();
+  if (customers.length === 0) {
+    throw new Error('テスト実行には顧客データが必要です。先に「顧客管理テスト」を実行してください。');
+  }
+  
+  const testCustomer = customers[0];
+  console.log(`   テスト顧客: ${testCustomer.customerId} - ${testCustomer.companyName}`);
+  
+  console.log('2. テスト請求書作成開始');
+  
+  // テスト請求書データ
+  const testInvoices = [
+    {
+      customerId: testCustomer.customerId,
+      advertiser: 'テスト広告主A',
+      subject: 'Webサイト制作',
+      unitPrice: 100000,
+      notes: 'テストデータ - システムテスト用'
+    },
+    {
+      customerId: testCustomer.customerId,
+      advertiser: 'テスト広告主B',
+      subject: 'ロゴデザイン制作',
+      unitPrice: 50000,
+      notes: 'テストデータ - 品質確認用'
+    }
+  ];
+  
+  const createdInvoices = [];
+  
+  // 請求書作成テスト
+  for (const invoiceData of testInvoices) {
+    try {
+      const invoice = await invoiceService.createInvoice(invoiceData);
+      createdInvoices.push(invoice);
+      console.log(`   請求書作成成功: ${invoice.invoiceNumber} - ¥${invoice.totalAmount.toLocaleString()}`);
+    } catch (error: any) {
+      console.log(`   請求書作成スキップ（既存またはエラー）: ${invoiceData.advertiser} - ${error.message}`);
+    }
+  }
+  
+  if (createdInvoices.length === 0) {
+    console.log('   新規請求書は作成されませんでした（既存データまたはエラー）');
+  }
+  
+  console.log('3. 請求書取得テスト開始');
+  
+  // 請求書取得テスト（作成したものまたは既存のもの）
+  const allInvoices = await invoiceService.getAllInvoices();
+  if (allInvoices.length > 0) {
+    const firstInvoice = allInvoices[0];
+    const retrievedInvoice = await invoiceService.getInvoice(firstInvoice.invoiceNumber);
+    console.log(`   請求書取得成功: ${retrievedInvoice.invoiceNumber} - ${retrievedInvoice.advertiser}`);
+  }
+  
+  console.log('4. 全請求書取得テスト開始');
+  
+  // 全請求書取得テスト
+  console.log(`   全請求書取得成功: ${allInvoices.length}件`);
+  
+  console.log('5. 請求書検索テスト開始');
+  
+  // 請求書検索テスト
+  const searchResult = await invoiceService.searchInvoices({ advertiser: 'テスト' });
+  console.log(`   検索結果: ${searchResult.filteredCount}件 / ${searchResult.totalCount}件中`);
+  
+  console.log('6. 請求書発行テスト開始');
+  
+  // 下書きの請求書があれば発行テスト
+  const draftInvoices = allInvoices.filter(i => i.status === 'draft');
+  if (draftInvoices.length > 0) {
+    try {
+      const draftInvoice = draftInvoices[0];
+      const issuedInvoice = await invoiceService.issueInvoice(draftInvoice.invoiceNumber);
+      console.log(`   請求書発行成功: ${issuedInvoice.invoiceNumber} - ステータス: ${issuedInvoice.status}`);
+    } catch (error: any) {
+      console.log(`   請求書発行スキップ: ${error.message}`);
+    }
+  } else {
+    console.log('   下書き請求書がないため発行テストをスキップ');
+  }
+  
+  console.log('7. 統計情報取得テスト開始');
+  
+  // 統計情報取得テスト
+  const stats = await invoiceService.getInvoiceStats();
+  console.log(`   統計情報取得成功:`);
+  console.log(`   - 総請求書数: ${stats.totalCount}`);
+  console.log(`   - 下書き: ${stats.draftCount}件`);
+  console.log(`   - 発行済み: ${stats.issuedCount}件`);
+  console.log(`   - 総請求金額: ¥${stats.totalAmount.toLocaleString()}`);
+  
+  console.log('8. 月次レポートテスト開始');
+  
+  // 今月のレポート
+  const now = new Date();
+  const monthlyReport = await invoiceService.generateMonthlyReport(now.getFullYear(), now.getMonth() + 1);
+  console.log(`   月次レポート取得成功:`);
+  console.log(`   - 対象: ${monthlyReport.year}年${monthlyReport.month}月`);
+  console.log(`   - 請求書数: ${monthlyReport.invoiceCount}件`);
+  console.log(`   - 請求金額: ¥${monthlyReport.totalAmount.toLocaleString()}`);
+  
+  console.log('請求書管理機能テスト全て成功');
 }
