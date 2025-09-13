@@ -30,3 +30,13 @@ export {
   showErrorToUser,
   getUserFriendlyMessage
 } from './error-handler';
+
+// スプレッドシート初期化関連
+export {
+  SheetInitializer,
+  InitializationOptions,
+  SheetConfig,
+  ValidationRule,
+  initializeSpreadsheet,
+  checkSpreadsheetInitialization
+} from './sheet-initializer';

@@ -1,15 +1,170 @@
+import { initializeSpreadsheet, checkSpreadsheetInitialization } from './utils/sheet-initializer';
+
 /**
  * スプレッドシートを開いたときに実行されるトリガー関数
  */
 export function onOpen(): void {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('GAS請求書管理システム')
+    .addItem('スプレッドシート初期化', 'initializeSpreadsheetSystem')
+    .addItem('初期化状況確認', 'checkInitializationStatus')
+    .addItem('初期化テスト実行', 'testSpreadsheetInitialization')
+    .addSeparator()
     .addItem('テスト実行', 'testFunction')
     .addItem('包括的テスト実行', 'runTestsWithLogs')
     .addItem('請求書作成', 'createInvoice')
     .addSeparator()
     .addItem('設定', 'showSettings')
     .addToUi();
+}
+
+/**
+ * スプレッドシート初期化メイン関数
+ */
+export function initializeSpreadsheetSystem(): void {
+  const ui = SpreadsheetApp.getUi();
+  
+  try {
+    // 確認ダイアログ
+    const response = ui.alert(
+      'スプレッドシート初期化',
+      'システムのスプレッドシートを初期化しますか？\\n\\n' +
+      '・顧客マスタシート\\n' +
+      '・請求書データシート\\n' +
+      '・請求明細シート\\n\\n' +
+      '既存のシートがある場合は保持されます。',
+      ui.ButtonSet.YES_NO
+    );
+    
+    if (response !== ui.Button.YES) {
+      ui.alert('初期化がキャンセルされました');
+      return;
+    }
+    
+    // 初期化オプション選択
+    const optionsResponse = ui.alert(
+      '初期化オプション',
+      'サンプルデータを追加しますか？\\n\\n' +
+      'YES: サンプル顧客データを含めて初期化\\n' +
+      'NO: 空のシートのみ作成',
+      ui.ButtonSet.YES_NO_CANCEL
+    );
+    
+    if (optionsResponse === ui.Button.CANCEL) {
+      ui.alert('初期化がキャンセルされました');
+      return;
+    }
+    
+    const addSampleData = optionsResponse === ui.Button.YES;
+    
+    // ログ開始
+    console.log('=== スプレッドシート初期化開始 ===');
+    console.log(`サンプルデータ: ${addSampleData ? '有効' : '無効'}`);
+    
+    // 初期化実行
+    ui.alert('初期化を開始します...\\n\\n処理完了まで少々お待ちください。');
+    
+    // SheetInitializerを使用して初期化
+    
+    const options = {
+      recreateSheets: false,
+      addSampleData: addSampleData,
+      setProtection: true,
+      setValidation: true
+    };
+    
+    // 非同期初期化を実行
+    initializeSpreadsheet(options)
+      .then(() => {
+        console.log('初期化成功');
+        ui.alert(
+          '初期化完了',
+          'スプレッドシートの初期化が完了しました！\\n\\n' +
+          '作成されたシート:\\n' +
+          '・顧客マスタ\\n' +
+          '・請求書データ\\n' +
+          '・請求明細' +
+          (addSampleData ? '\\n\\nサンプルデータが追加されています。' : ''),
+          ui.ButtonSet.OK
+        );
+      })
+      .catch((error: any) => {
+        console.error('初期化エラー:', error);
+        ui.alert(
+          'エラー',
+          `初期化中にエラーが発生しました:\\n\\n${error.message}\\n\\n` +
+          'システム管理者にお問い合わせください。',
+          ui.ButtonSet.OK
+        );
+      });
+      
+  } catch (error: any) {
+    console.error('初期化処理エラー:', error);
+    ui.alert(
+      'エラー',
+      `処理中にエラーが発生しました:\\n\\n${error.message}`,
+      ui.ButtonSet.OK
+    );
+  }
+}
+
+/**
+ * 初期化状況確認関数
+ */
+export function checkInitializationStatus(): void {
+  const ui = SpreadsheetApp.getUi();
+  
+  try {
+    console.log('初期化状況確認開始');
+    
+    // SheetInitializerを使用して状況確認
+    const status = checkSpreadsheetInitialization();
+    
+    let message = '=== 初期化状況 ===\\n\\n';
+    
+    if (status.initialized) {
+      message += '✅ システムは正常に初期化されています\\n\\n';
+      message += '利用可能なシート:\\n';
+      message += '・顧客マスタ\\n';
+      message += '・請求書データ\\n';
+      message += '・請求明細\\n';
+    } else {
+      message += '❌ システムの初期化が不完全です\\n\\n';
+      message += '不足しているシート:\\n';
+      status.missingSheets.forEach(sheetName => {
+        message += `・${sheetName}\\n`;
+      });
+      message += '\\n「スプレッドシート初期化」を実行してください。';
+    }
+    
+    // スプレッドシート情報も追加
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    const allSheets = spreadsheet.getSheets().map(sheet => sheet.getName());
+    
+    message += '\\n\\n=== 全シート一覧 ===\\n';
+    allSheets.forEach(sheetName => {
+      message += `・${sheetName}\\n`;
+    });
+    
+    message += `\\n総シート数: ${allSheets.length}`;
+    message += `\\nスプレッドシート名: ${spreadsheet.getName()}`;
+    
+    ui.alert('初期化状況', message, ui.ButtonSet.OK);
+    
+    console.log('初期化状況確認完了', {
+      initialized: status.initialized,
+      missingSheets: status.missingSheets,
+      totalSheets: allSheets.length
+    });
+    
+  } catch (error: any) {
+    console.error('初期化状況確認エラー:', error);
+    ui.alert(
+      'エラー',
+      `状況確認中にエラーが発生しました:\\n\\n${error.message}`,
+      ui.ButtonSet.OK
+    );
+  }
 }
 
 /**
@@ -264,5 +419,78 @@ export function getLastTestResults(): string {
       status: 'error',
       message: error.toString()
     });
+  }
+}
+
+/**
+ * スプレッドシート初期化のテスト関数
+ */
+export function testSpreadsheetInitialization(): void {
+  const ui = SpreadsheetApp.getUi();
+  
+  try {
+    console.log('=== スプレッドシート初期化テスト開始 ===');
+    
+    // 現在の状況を確認
+    const status = checkSpreadsheetInitialization();
+    console.log('初期化前状況:', status);
+    
+    ui.alert(
+      'テスト実行',
+      'スプレッドシート初期化のテストを実行します。\\n\\n' +
+      '処理完了まで少々お待ちください。',
+      ui.ButtonSet.OK
+    );
+    
+    // テスト用の初期化実行（サンプルデータ付き）
+    const options = {
+      recreateSheets: false,
+      addSampleData: true,
+      setProtection: true,
+      setValidation: true
+    };
+    
+    initializeSpreadsheet(options)
+      .then(() => {
+        // 初期化後の状況確認
+        const statusAfter = checkSpreadsheetInitialization();
+        console.log('初期化後状況:', statusAfter);
+        
+        let message = '=== テスト結果 ===\\n\\n';
+        
+        if (statusAfter.initialized) {
+          message += '✅ 初期化テスト成功\\n\\n';
+          message += '作成されたシート:\\n';
+          message += '・顧客マスタ (サンプルデータ付き)\\n';
+          message += '・請求書データ\\n';
+          message += '・請求明細\\n\\n';
+          message += 'データ検証とシート保護も設定されています。';
+        } else {
+          message += '❌ 初期化テスト失敗\\n\\n';
+          message += '不足しているシート:\\n';
+          statusAfter.missingSheets.forEach(sheetName => {
+            message += `・${sheetName}\\n`;
+          });
+        }
+        
+        ui.alert('テスト完了', message, ui.ButtonSet.OK);
+        console.log('=== スプレッドシート初期化テスト完了 ===');
+      })
+      .catch((error: any) => {
+        console.error('初期化テストエラー:', error);
+        ui.alert(
+          'テストエラー',
+          `初期化テスト中にエラーが発生しました:\\n\\n${error.message}`,
+          ui.ButtonSet.OK
+        );
+      });
+      
+  } catch (error: any) {
+    console.error('テスト処理エラー:', error);
+    ui.alert(
+      'テストエラー',
+      `テスト処理中にエラーが発生しました:\\n\\n${error.message}`,
+      ui.ButtonSet.OK
+    );
   }
 }

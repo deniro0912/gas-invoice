@@ -34,7 +34,9 @@
       "mcp__serena__think_about_collected_information",
       "mcp__serena__list_dir",
       "mcp__serena__find_file",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "mcp__serena__replace_symbol_body",
+      "Bash(npm run lint)"
     ],
     "deny": []
   }
