@@ -29,7 +29,12 @@
       "Bash(true)",
       "Bash(node:*)",
       "WebFetch(domain:developers.google.com)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "mcp__serena__get_current_config",
+      "mcp__serena__think_about_collected_information",
+      "mcp__serena__list_dir",
+      "mcp__serena__find_file",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

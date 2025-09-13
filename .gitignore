@@ -35,3 +35,15 @@ tmp/
 temp/
 *.tmp
 nul
+
+# Test files and browser data
+test-*.mjs
+gas-*.mjs
+*-browser.mjs
+gas-*.png
+project-*.png
+error-*.png
+browser-data/
+
+# GAS development artifacts
+*.gs
