@@ -1,0 +1,52 @@
+{
+  "name": "gas-invoice-management-system",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "build:watch": "node esbuild.config.mjs --watch",
+    "clean": "rimraf dist",
+    "env:dev": "node scripts/switch-env.mjs dev",
+    "env:prod": "node scripts/switch-env.mjs prod",
+    "push:dev": "npm run env:dev && npm run build && clasp push",
+    "push:prod": "npm run env:prod && npm run build && clasp push",
+    "open:dev": "npm run env:dev && clasp open",
+    "open:prod": "npm run env:prod && clasp open",
+    "deploy:dev": "npm run push:dev && clasp deploy --description \"dev\"",
+    "deploy:prod": "npm run push:prod && clasp deploy --description \"prod\"",
+    "props:dev": "node scripts/inject-props.mjs dev",
+    "props:prod": "node scripts/inject-props.mjs prod",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "test": "node scripts/run-comprehensive-test.mjs",
+    "test:quick": "node scripts/test-runner.mjs",
+    "test:comprehensive": "node scripts/run-comprehensive-test.mjs",
+    "test:logs": "node scripts/check-logs.mjs",
+    "logs": "clasp logs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Google Apps Scriptを使用した請求書管理システム",
+  "devDependencies": {
+    "@types/google-apps-script": "^2.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
+    "@typescript-eslint/parser": "^8.43.0",
+    "esbuild": "^0.25.9",
+    "eslint": "^9.35.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0"
+  }
+}

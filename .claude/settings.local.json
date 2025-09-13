@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena__activate_project",
+      "Bash(dir:*)",
+      "Bash(npm init:*)",
+      "Bash(clasp:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm i:*)",
+      "Bash(npm run build:*)",
+      "Bash(cp:*)",
+      "Bash(npm run push:dev:*)",
+      "Bash(npm run open:dev:*)",
+      "mcp__playwright__playwright_navigate",
+      "Bash(npx playwright:*)",
+      "Bash(npm run test:logs:*)",
+      "mcp__serena__read_file",
+      "mcp__serena__replace_regex",
+      "mcp__serena__insert_after_symbol",
+      "mcp__serena__search_for_pattern",
+      "Bash(npm run test:*)",
+      "Bash(where playwright)",
+      "Bash(npm run playwright:install:*)",
+      "Bash(echo $PLAYWRIGHT_BROWSERS_PATH)",
+      "Bash(npm config:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(set PLAYWRIGHT_BROWSERS_PATH=C:DevScreenShotnode_modulesplaywright)",
+      "Bash(true)",
+      "Bash(node:*)",
+      "WebFetch(domain:developers.google.com)",
+      "Bash(git init:*)"
+    ],
+    "deny": []
+  }
+}

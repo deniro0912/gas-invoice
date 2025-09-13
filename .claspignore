@@ -1,0 +1,14 @@
+# 開発用ファイルを除外
+node_modules/**
+src/**
+scripts/**
+env/**
+*.ts
+*.md
+package*.json
+tsconfig.json
+esbuild.config.mjs
+.eslintrc.*
+.prettierrc.*
+.git/**
+.gitignore
