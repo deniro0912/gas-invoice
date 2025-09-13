@@ -1,4 +1,5 @@
 import { initializeSpreadsheet, checkSpreadsheetInitialization } from './utils/sheet-initializer';
+import { CustomerUI } from './ui/customer.ui';
 
 /**
  * スプレッドシートを開いたときに実行されるトリガー関数
@@ -6,9 +7,20 @@ import { initializeSpreadsheet, checkSpreadsheetInitialization } from './utils/s
 export function onOpen(): void {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('GAS請求書管理システム')
-    .addItem('スプレッドシート初期化', 'initializeSpreadsheetSystem')
-    .addItem('初期化状況確認', 'checkInitializationStatus')
-    .addItem('初期化テスト実行', 'testSpreadsheetInitialization')
+    .addSubMenu(ui.createMenu('スプレッドシート管理')
+      .addItem('初期化実行', 'initializeSpreadsheetSystem')
+      .addItem('初期化状況確認', 'checkInitializationStatus')
+      .addItem('初期化テスト実行', 'testSpreadsheetInitialization'))
+    .addSubMenu(ui.createMenu('顧客管理')
+      .addItem('顧客一覧', 'showCustomerList')
+      .addItem('顧客検索', 'showCustomerSearch')
+      .addItem('顧客登録', 'showCustomerRegistration')
+      .addItem('顧客更新', 'showCustomerUpdate')
+      .addItem('顧客削除', 'showCustomerDelete')
+      .addSeparator()
+      .addItem('顧客統計', 'showCustomerStats')
+      .addItem('顧客管理テスト', 'testCustomerManagement')
+      .addItem('データ品質チェック', 'checkCustomerDataQuality'))
     .addSeparator()
     .addItem('テスト実行', 'testFunction')
     .addItem('包括的テスト実行', 'runTestsWithLogs')
@@ -493,4 +505,345 @@ export function testSpreadsheetInitialization(): void {
       ui.ButtonSet.OK
     );
   }
+}
+
+// ===== 顧客管理関数 =====
+
+/**
+ * 顧客一覧表示
+ */
+export function showCustomerList(): void {
+  const customerUI = new CustomerUI();
+  customerUI.showCustomerList().catch(error => {
+    console.error('顧客一覧表示エラー:', error);
+  });
+}
+
+/**
+ * 顧客検索
+ */
+export function showCustomerSearch(): void {
+  const customerUI = new CustomerUI();
+  customerUI.showCustomerSearch().catch(error => {
+    console.error('顧客検索エラー:', error);
+  });
+}
+
+/**
+ * 顧客登録
+ */
+export function showCustomerRegistration(): void {
+  const customerUI = new CustomerUI();
+  customerUI.showCustomerRegistration().catch(error => {
+    console.error('顧客登録エラー:', error);
+  });
+}
+
+/**
+ * 顧客更新
+ */
+export function showCustomerUpdate(): void {
+  const customerUI = new CustomerUI();
+  customerUI.showCustomerUpdate().catch(error => {
+    console.error('顧客更新エラー:', error);
+  });
+}
+
+/**
+ * 顧客削除
+ */
+export function showCustomerDelete(): void {
+  const customerUI = new CustomerUI();
+  customerUI.showCustomerDelete().catch(error => {
+    console.error('顧客削除エラー:', error);
+  });
+}
+
+/**
+ * 顧客統計
+ */
+export function showCustomerStats(): void {
+  const customerUI = new CustomerUI();
+  customerUI.showCustomerStats().catch(error => {
+    console.error('顧客統計エラー:', error);
+  });
+}
+
+/**
+ * 顧客管理機能の包括的テスト
+ */
+export function testCustomerManagement(): void {
+  const ui = SpreadsheetApp.getUi();
+  
+  try {
+    console.log('=== 顧客管理機能テスト開始 ===');
+    
+    ui.alert(
+      '顧客管理テスト',
+      '顧客管理機能のテストを実行します。\\n\\n' +
+      '以下の操作を順番に実行します：\\n' +
+      '1. テスト顧客の作成\\n' +
+      '2. 顧客情報の取得\\n' +
+      '3. 顧客一覧の取得\\n' +
+      '4. 顧客検索\\n' +
+      '5. 統計情報の取得\\n\\n' +
+      '処理完了まで少々お待ちください。',
+      ui.ButtonSet.OK
+    );
+    
+    // 非同期でテスト実行
+    runCustomerManagementTest()
+      .then(() => {
+        ui.alert(
+          'テスト完了',
+          '顧客管理機能のテストが完了しました。\\n\\n' +
+          '詳細はコンソールログとシステムログシートを確認してください。',
+          ui.ButtonSet.OK
+        );
+        console.log('=== 顧客管理機能テスト完了 ===');
+      })
+      .catch((error: any) => {
+        console.error('顧客管理テストエラー:', error);
+        ui.alert(
+          'テストエラー',
+          `テスト実行中にエラーが発生しました:\\n\\n${error.message}\\n\\n` +
+          '詳細はコンソールログを確認してください。',
+          ui.ButtonSet.OK
+        );
+      });
+      
+  } catch (error: any) {
+    console.error('顧客管理テスト処理エラー:', error);
+    ui.alert(
+      'テストエラー',
+      `テスト処理中にエラーが発生しました:\\n\\n${error.message}`,
+      ui.ButtonSet.OK
+    );
+  }
+}
+
+/**
+ * 顧客管理テスト実行（非同期）
+ */
+async function runCustomerManagementTest(): Promise<void> {
+  const { CustomerService } = await import('./services/customer.service');
+  const customerService = new CustomerService();
+  
+  console.log('1. テスト顧客作成開始');
+  
+  // テスト顧客データ
+  const testCustomers = [
+    {
+      companyName: 'テスト株式会社A',
+      contactPerson: 'テスト太郎',
+      email: 'test-a@example.com',
+      postalCode: '100-0001',
+      address: '東京都千代田区千代田1-1',
+      phoneNumber: '03-1111-1111'
+    },
+    {
+      companyName: 'テスト有限会社B',
+      contactPerson: 'テスト花子',
+      email: 'test-b@example.com',
+      postalCode: '160-0023',
+      address: '東京都新宿区西新宿1-1',
+      phoneNumber: '03-2222-2222'
+    },
+    {
+      companyName: 'テスト合同会社C',
+      email: 'test-c@example.com'
+    }
+  ];
+  
+  const createdCustomers = [];
+  
+  // 顧客作成テスト
+  for (const customerData of testCustomers) {
+    try {
+      const customer = await customerService.createCustomer(customerData);
+      createdCustomers.push(customer);
+      console.log(`   顧客作成成功: ${customer.customerId} - ${customer.companyName}`);
+    } catch (error: any) {
+      if (error.code === 'CUST002') { // 重複エラーの場合はスキップ
+        console.log(`   顧客作成スキップ（既存）: ${customerData.companyName}`);
+      } else {
+        throw error;
+      }
+    }
+  }
+  
+  console.log('2. 顧客取得テスト開始');
+  
+  // 顧客取得テスト
+  if (createdCustomers.length > 0) {
+    const firstCustomer = createdCustomers[0];
+    const retrievedCustomer = await customerService.getCustomer(firstCustomer.customerId);
+    console.log(`   顧客取得成功: ${retrievedCustomer.customerId} - ${retrievedCustomer.companyName}`);
+  }
+  
+  console.log('3. 全顧客取得テスト開始');
+  
+  // 全顧客取得テスト
+  const allCustomers = await customerService.getAllCustomers();
+  console.log(`   全顧客取得成功: ${allCustomers.length}件`);
+  
+  console.log('4. 顧客検索テスト開始');
+  
+  // 顧客検索テスト
+  const searchResult = await customerService.searchCustomers({ companyName: 'テスト' });
+  console.log(`   検索結果: ${searchResult.filteredCount}件 / ${searchResult.totalCount}件中`);
+  
+  console.log('5. 統計情報取得テスト開始');
+  
+  // 統計情報取得テスト
+  const stats = await customerService.getCustomerStats();
+  console.log(`   統計情報取得成功:`);
+  console.log(`   - 総顧客数: ${stats.totalCount}`);
+  console.log(`   - 直近30日: ${stats.recentRegistrations}件`);
+  console.log(`   - 最近の顧客: ${stats.topCompanies.length}件`);
+  
+  console.log('顧客管理機能テスト全て成功');
+}
+
+/**
+ * 顧客データ品質チェック
+ */
+export function checkCustomerDataQuality(): void {
+  const ui = SpreadsheetApp.getUi();
+  
+  try {
+    console.log('=== 顧客データ品質チェック開始 ===');
+    
+    ui.alert(
+      '顧客データ品質チェック',
+      '顧客データの品質をチェックします。\\n\\n' +
+      '以下の項目をチェックします：\\n' +
+      '・重複データの確認\\n' +
+      '・必須フィールドの確認\\n' +
+      '・データ形式の確認\\n\\n' +
+      '処理完了まで少々お待ちください。',
+      ui.ButtonSet.OK
+    );
+    
+    // 非同期で品質チェック実行
+    runDataQualityCheck()
+      .then((result) => {
+        let message = '=== 顧客データ品質チェック結果 ===\\n\\n';
+        message += `チェック対象: ${result.totalCount}件\\n\\n`;
+        message += `✅ 正常データ: ${result.validCount}件\\n`;
+        
+        if (result.issues.length > 0) {
+          message += `⚠️  問題のあるデータ: ${result.issues.length}件\\n\\n`;
+          message += '=== 問題詳細 ===\\n';
+          result.issues.slice(0, 10).forEach((issue, index) => {
+            message += `${index + 1}. ${issue}\\n`;
+          });
+          if (result.issues.length > 10) {
+            message += `... 他${result.issues.length - 10}件\\n`;
+          }
+        } else {
+          message += '\\n全データが正常です！';
+        }
+        
+        ui.alert('品質チェック結果', message, ui.ButtonSet.OK);
+        console.log('=== 顧客データ品質チェック完了 ===');
+      })
+      .catch((error: any) => {
+        console.error('品質チェックエラー:', error);
+        ui.alert(
+          'チェックエラー',
+          `品質チェック中にエラーが発生しました:\\n\\n${error.message}`,
+          ui.ButtonSet.OK
+        );
+      });
+      
+  } catch (error: any) {
+    console.error('品質チェック処理エラー:', error);
+    ui.alert(
+      'チェックエラー',
+      `処理中にエラーが発生しました:\\n\\n${error.message}`,
+      ui.ButtonSet.OK
+    );
+  }
+}
+
+/**
+ * データ品質チェック実行（非同期）
+ */
+async function runDataQualityCheck(): Promise<{
+  totalCount: number;
+  validCount: number;
+  issues: string[];
+}> {
+  const { CustomerService } = await import('./services/customer.service');
+  const customerService = new CustomerService();
+  
+  const customers = await customerService.getAllCustomers();
+  const issues: string[] = [];
+  let validCount = 0;
+  
+  for (const customer of customers) {
+    let isValid = true;
+    
+    // 必須フィールドチェック
+    if (!customer.companyName || customer.companyName.trim() === '') {
+      issues.push(`${customer.customerId}: 会社名が空です`);
+      isValid = false;
+    }
+    
+    // メール形式チェック
+    if (customer.email) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(customer.email)) {
+        issues.push(`${customer.customerId}: メールアドレス形式が不正です (${customer.email})`);
+        isValid = false;
+      }
+    }
+    
+    // 郵便番号形式チェック
+    if (customer.postalCode) {
+      const postalRegex = /^\\d{3}-\\d{4}$/;
+      if (!postalRegex.test(customer.postalCode)) {
+        issues.push(`${customer.customerId}: 郵便番号形式が不正です (${customer.postalCode})`);
+        isValid = false;
+      }
+    }
+    
+    // 電話番号形式チェック
+    if (customer.phoneNumber) {
+      const phoneRegex = /^0\\d{1,4}-\\d{1,4}-\\d{3,4}$/;
+      if (!phoneRegex.test(customer.phoneNumber)) {
+        issues.push(`${customer.customerId}: 電話番号形式が不正です (${customer.phoneNumber})`);
+        isValid = false;
+      }
+    }
+    
+    if (isValid) {
+      validCount++;
+    }
+  }
+  
+  // 重複チェック
+  const companyNames = customers.map(c => c.companyName.toLowerCase());
+  const duplicateNames = companyNames.filter((name, index) => 
+    companyNames.indexOf(name) !== index
+  );
+  
+  if (duplicateNames.length > 0) {
+    duplicateNames.forEach(name => {
+      issues.push(`重複する会社名: ${name}`);
+    });
+  }
+  
+  console.log('品質チェック完了:', {
+    total: customers.length,
+    valid: validCount,
+    issues: issues.length
+  });
+  
+  return {
+    totalCount: customers.length,
+    validCount,
+    issues
+  };
 }

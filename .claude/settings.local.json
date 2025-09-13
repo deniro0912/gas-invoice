@@ -36,7 +36,8 @@
       "mcp__serena__find_file",
       "Bash(git add:*)",
       "mcp__serena__replace_symbol_body",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "mcp__serena__create_text_file"
     ],
     "deny": []
   }
