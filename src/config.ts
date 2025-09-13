@@ -1,36 +1,208 @@
 /**
- * システム設定を管理するモジュール
+ * システム設定管理
  */
 
 /**
- * Script Propertiesから設定値を取得
+ * 環境設定
  */
-export const CONFIG = {
-  // 環境設定
-  ENVIRONMENT: PropertiesService.getScriptProperties().getProperty('ENVIRONMENT') || 'development',
-  DEBUG_MODE: PropertiesService.getScriptProperties().getProperty('DEBUG_MODE') === 'true',
-  
-  // API設定
-  API_BASE_URL: PropertiesService.getScriptProperties().getProperty('API_BASE_URL') || '',
-  
-  // アプリケーション設定
-  APP_NAME: 'GAS請求書管理システム',
-  VERSION: '1.0.0',
-  
-  // スプレッドシート設定
-  SHEET_NAMES: {
-    CUSTOMERS: '顧客情報',
-    USAGE: '使用量データ',
-    INVOICES: '請求履歴',
-    SETTINGS: '設定'
-  }
+export interface AppConfig {
+  environment: 'development' | 'production';
+  debugMode: boolean;
+  spreadsheetId?: string;
+  templateFolderName: string;
+  templateFileName: string;
+  outputFolderName: string;
+  maxRetries: number;
+  requestTimeout: number;
+}
+
+/**
+ * スプレッドシート設定
+ */
+export interface SpreadsheetConfig {
+  customerSheetName: string;
+  invoiceSheetName: string;
+  invoiceDetailSheetName: string;
+  maxRows: number;
+  batchSize: number;
+}
+
+/**
+ * PDF設定
+ */
+export interface PDFConfig {
+  templateFolderName: string;
+  templateFileName: string;
+  outputFolderName: string;
+  defaultFontSize: number;
+  dateFormat: string;
+  numberFormat: string;
+}
+
+/**
+ * デフォルト設定
+ */
+const DEFAULT_CONFIG: AppConfig = {
+  environment: 'development',
+  debugMode: true,
+  templateFolderName: '請求書テンプレート',
+  templateFileName: 'invoice_template.pdf',
+  outputFolderName: '請求書',
+  maxRetries: 3,
+  requestTimeout: 30000 // 30秒
+};
+
+const DEFAULT_SPREADSHEET_CONFIG: SpreadsheetConfig = {
+  customerSheetName: '顧客マスタ',
+  invoiceSheetName: '請求書データ',
+  invoiceDetailSheetName: '請求明細',
+  maxRows: 10000,
+  batchSize: 100
+};
+
+const DEFAULT_PDF_CONFIG: PDFConfig = {
+  templateFolderName: '請求書テンプレート',
+  templateFileName: 'invoice_template.pdf',
+  outputFolderName: '請求書',
+  defaultFontSize: 12,
+  dateFormat: 'yyyy年MM月dd日',
+  numberFormat: '#,##0'
 };
 
 /**
- * デバッグログ出力
+ * 設定管理クラス
  */
-export function debugLog(message: string, data?: unknown): void {
-  if (CONFIG.DEBUG_MODE) {
-    console.log(`[${new Date().toISOString()}] ${message}`, data || '');
+export class ConfigManager {
+  private static instance: ConfigManager;
+  private config: AppConfig;
+  private spreadsheetConfig: SpreadsheetConfig;
+  private pdfConfig: PDFConfig;
+
+  private constructor() {
+    this.loadConfig();
   }
+
+  public static getInstance(): ConfigManager {
+    if (!ConfigManager.instance) {
+      ConfigManager.instance = new ConfigManager();
+    }
+    return ConfigManager.instance;
+  }
+
+  /**
+   * 設定を読み込む
+   */
+  private loadConfig(): void {
+    try {
+      const properties = PropertiesService.getScriptProperties();
+      
+      // アプリケーション設定
+      const environment = properties.getProperty('ENVIRONMENT') as 'development' | 'production' || 'development';
+      const debugMode = properties.getProperty('DEBUG_MODE') === 'true';
+      const spreadsheetId = properties.getProperty('SPREADSHEET_ID') || undefined;
+      
+      this.config = {
+        ...DEFAULT_CONFIG,
+        environment,
+        debugMode,
+        spreadsheetId
+      };
+
+      // スプレッドシート設定
+      this.spreadsheetConfig = {
+        ...DEFAULT_SPREADSHEET_CONFIG
+      };
+
+      // PDF設定
+      this.pdfConfig = {
+        ...DEFAULT_PDF_CONFIG
+      };
+
+    } catch (error) {
+      console.error('設定読み込みエラー:', error);
+      // デフォルト設定にフォールバック
+      this.config = DEFAULT_CONFIG;
+      this.spreadsheetConfig = DEFAULT_SPREADSHEET_CONFIG;
+      this.pdfConfig = DEFAULT_PDF_CONFIG;
+    }
+  }
+
+  /**
+   * アプリケーション設定を取得
+   */
+  public getAppConfig(): AppConfig {
+    return { ...this.config };
+  }
+
+  /**
+   * スプレッドシート設定を取得
+   */
+  public getSpreadsheetConfig(): SpreadsheetConfig {
+    return { ...this.spreadsheetConfig };
+  }
+
+  /**
+   * PDF設定を取得
+   */
+  public getPDFConfig(): PDFConfig {
+    return { ...this.pdfConfig };
+  }
+
+  /**
+   * 環境を取得
+   */
+  public getEnvironment(): 'development' | 'production' {
+    return this.config.environment;
+  }
+
+  /**
+   * デバッグモードかどうか
+   */
+  public isDebugMode(): boolean {
+    return this.config.debugMode;
+  }
+
+  /**
+   * 本番環境かどうか
+   */
+  public isProduction(): boolean {
+    return this.config.environment === 'production';
+  }
+
+  /**
+   * 設定を更新
+   */
+  public updateConfig(newConfig: Partial<AppConfig>): void {
+    this.config = { ...this.config, ...newConfig };
+  }
+
+  /**
+   * 設定をリロード
+   */
+  public reload(): void {
+    this.loadConfig();
+  }
+}
+
+/**
+ * 設定取得のヘルパー関数
+ */
+export function getConfig(): AppConfig {
+  return ConfigManager.getInstance().getAppConfig();
+}
+
+export function getSpreadsheetConfig(): SpreadsheetConfig {
+  return ConfigManager.getInstance().getSpreadsheetConfig();
+}
+
+export function getPDFConfig(): PDFConfig {
+  return ConfigManager.getInstance().getPDFConfig();
+}
+
+export function isDebugMode(): boolean {
+  return ConfigManager.getInstance().isDebugMode();
+}
+
+export function isProduction(): boolean {
+  return ConfigManager.getInstance().isProduction();
 }
