@@ -258,7 +258,7 @@ export class InvoiceService {
 **タスク一覧:**
 - [ ] HTMLダイアログ作成
 - [ ] 顧客選択UI
--- [ ] 商品選択・数量入力UI
+- [ ] 制作費金額入力UI（品目:「制作費」固定、数量:「1」固定、単位:「式」固定）
 - [ ] 確認画面
 
 **実装内容:**
@@ -699,8 +699,7 @@ export class InvoiceListService {
 
 **テスト項目:**
 - [ ] 顧客登録・編集・削除
-- [ ] 商品登録・編集・削除
-- [ ] 請求書作成フロー全体
+- [ ] 請求書作成フロー全体（制作費一式固定）
 - [ ] PDF生成と保存
 - [ ] 請求書検索・一覧表示
 - [ ] エラーハンドリング
@@ -711,25 +710,20 @@ export class InvoiceListService {
 function testInvoiceCreation() {
   const testData = {
     customerId: 'C00001',
-    items: [
-      {
-        productId: 'P00001',
-        productName: 'テスト商品',
-        quantity: 10,
-        unitPrice: 1000,
-        taxRate: 0.10,
-        amount: 10000
-      }
-    ]
+    unitPrice: 10000,  // 制作費金額
+    advertiser: 'テスト広告主',
+    subject: 'テスト件名'
   };
+  
+  // 固定値: 品目名="制作費", 数量=1, 単位="式", 税率=0.10
   
   const invoice = createInvoice(testData);
   
   // アサーション
   console.assert(invoice.invoiceNumber.match(/\d{6}-\d{3}/));
-  console.assert(invoice.subtotal === 10000);
-  console.assert(invoice.taxAmount === 1000);
-  console.assert(invoice.totalAmount === 11000);
+  console.assert(invoice.subtotal === 10000);  // 制作費金額
+  console.assert(invoice.taxAmount === 1000);   // 消費税10%
+  console.assert(invoice.totalAmount === 11000); // 合計
   
   console.log('✅ 請求書作成テスト成功');
 }
@@ -746,10 +740,9 @@ function testInvoiceCreation() {
 
 ### 必須機能（Must Have）【80%完了】
 1. ✅ 顧客登録・管理（完了）
-2. ✅ 商品登録・管理（完了）
-3. ✅ 請求書作成（完了）
-4. ✅ PDF生成（完了）
-5. 🔄 請求履歴表示（次回実装）
+2. ✅ 請求書作成（完了）（制作費一式固定）
+3. ✅ PDF生成（完了）
+4. 🔄 請求履歴表示（次回実装）
 
 ### あると良い機能（Nice to Have）
 1. 詳細な検索機能
@@ -761,6 +754,7 @@ function testInvoiceCreation() {
 2. 入金管理
 3. メール送信
 4. 権限管理
+5. 複数品目対応（現在は「制作費」一式のみ）
 
 ## 4. リスクと対策
 

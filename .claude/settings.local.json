@@ -57,7 +57,10 @@
       "mcp__serena__find_symbol",
       "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp apis list)",
       "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev npm run push:dev)",
-      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp logs --limit 10)"
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp logs --limit 10)",
+      "Bash(gh repo create:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo view:*)"
     ],
     "deny": []
   }
