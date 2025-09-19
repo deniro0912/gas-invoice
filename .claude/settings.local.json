@@ -60,7 +60,8 @@
       "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp logs --limit 10)",
       "Bash(gh repo create:*)",
       "Bash(gh auth:*)",
-      "Bash(gh repo view:*)"
+      "Bash(gh repo view:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

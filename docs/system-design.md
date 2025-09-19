@@ -57,12 +57,12 @@ gas-invoice/
 │   │   │   ├── invoice-create.html
 │   │   │   ├── customer-select.html
 │   │   │   └── product-select.html
-│   │   └── templates/        # HTMLテンプレート
+│   │   └── (削除予定)        # 旧HTMLテンプレート関連
 │   │
 │   ├── services/              # ビジネス層
 │   │   ├── invoice.service.ts    # 請求書サービス
 │   │   ├── customer.service.ts   # 顧客サービス
-│   │   └── pdf.service.ts        # PDF生成サービス
+│   │   └── (pdf.service.ts)      # 旧PDF生成サービス（HTML方式、使用中止）
 │   │
 │   ├── repositories/          # データアクセス層
 │   │   ├── base.repository.ts    # 基底リポジトリ
@@ -215,8 +215,8 @@ enum InvoiceStatus {
 ### 6.1 PDFテンプレート仕様
 
 #### 6.1.1 テンプレート管理
-- **保存場所**: Google Drive `/請求書テンプレート/invoice_template.pdf`
-- **フォームフィールド**: PDFにフォームフィールドを設定済み
+- **保存場所**: Google Drive (File ID: 15qHfTaG1WUJebBIYvJYPYlbSc-xo7_Lq)
+- **フォームフィールド**: 現在0個（追加作成予定）
 - **フィールド名規則**: システムで認識可能な名前を使用
 
 #### 6.1.2 埋め込みフィールド一覧
@@ -239,15 +239,15 @@ tax_amount         | 消費税額
 total_amount       | 合計金額
 ```
 
-#### 6.1.3 テンプレート更新フロー
-1. デザイナーがPDFテンプレートを作成
-2. フォームフィールドを上記命名規則で設定
-3. Google Driveの指定フォルダにアップロード
-4. システムが自動でテンプレートを認識
+#### 6.1.3 フォームフィールド作成フロー
+1. 既存PDFテンプレートにフォームフィールドを追加
+2. フィールド名を上記命名規則で設定
+3. pdf-libライブラリでフィールドへのデータ埋め込み実装
+4. システムが自動でフィールドを認識・操作
 
 ### 6.2 ファイル保存仕様
 
-- **テンプレート保存先**: Google Drive `/請求書テンプレート/`
+- **テンプレート保存先**: Google Drive (File ID管理)
 - **生成PDF保存先**: Google Drive `/請求書/[年]/[月]/`
 - **ファイル名**: `請求書_[請求書番号]_[顧客名]_[発行日].pdf`
 - **例**: `請求書_202501-001_株式会社ABC_20250101.pdf`

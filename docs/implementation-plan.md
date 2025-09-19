@@ -235,7 +235,7 @@ export class InvoiceService {
 **タスク一覧:**
 - [x] PDFテンプレートからの読み込み
 - [x] pdf-libライブラリ統合
-- [ ] フォームフィールドへのデータ埋め込み（フィールドが0個のため座標ベース方式へ変更必要）
+- [ ] フォームフィールドへのデータ埋め込み（フィールド作成・設定後に実装）
 - [ ] Google Drive保存処理（データ埋め込み後の実装待ち）
 - [ ] テンプレートベースPDF生成システム完成
 
@@ -244,16 +244,25 @@ export class InvoiceService {
 - ✅ pdf-libライブラリの動的ロード（UrlFetchApp + eval）
 - ✅ PDFフォームフィールドの自動検出・解析（結果: フィールド0個と判明）
 
-**未実装機能（座標ベース方式への移行が必要）:**
-- ❌ テキストデータのPDFへの埋め込み
-- ❌ 請求書データの座標ベース描画
-- ❌ 修正済みPDFのGoogle Drive保存
+**未実装機能（PDFテンプレートフォームフィールド方式）:**
+- ❌ PDFテンプレートへのフォームフィールド作成（現在のテンプレートにフィールド0個）
+- ❌ フォームフィールドへの請求書データ埋め込み
+- ❌ 完成PDFのGoogle Drive自動保存
 - ❌ 完全なテンプレートベースPDF生成システム
 
 **実装ファイル:**
-- `src/main.ts` - testPDFTemplateFields()関数
-- `src/services/pdf-generator.service.ts` - PDF生成サービス
+- `src/main.ts` - testPDFTemplateFields()関数（pdf-lib統合テスト）
 - テンプレートファイル: invoice-template.pdf (ID: 15qHfTaG1WUJebBIYvJYPYlbSc-xo7_Lq)
+
+**使用中止ファイル:**
+- `src/services/pdf-generator.service.ts` - HTMLテンプレート方式（採用せず）
+- `docs/pdf-generation-test-guide.md` - 古いHTML方式テスト結果（削除済み）
+
+**技術的成果:**
+- ✅ pdf-libライブラリのGoogle Apps Script環境での動的統合
+- ✅ PDFフォームフィールドの自動検出システム
+- ❌ フォームフィールドベースのデータ埋め込み（フィールド作成後に実装予定）
+- ✅ フォームフィールドベースアプローチの確立
 
 #### Day 8-9: 請求書作成UI（次の実装対象）
 
@@ -743,8 +752,8 @@ function testInvoiceCreation() {
 ### 必須機能（Must Have）【70%完了】
 1. ✅ 顧客登録・管理（完了）
 2. ✅ 請求書作成（完了）（制作費一式固定）
-3. ✅ PDF生成（完了）
-4. 🔄 請求履歴表示（次回実装）
+3. 🔄 PDF生成（部分実装） - PDFテンプレートフォームフィールド方式（フィールド作成・埋め込み実装待ち）
+4. ❌ 請求履歴表示（未実装）
 
 ### あると良い機能（Nice to Have）
 1. 詳細な検索機能
