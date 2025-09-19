@@ -1,0 +1,94 @@
+{
+  "timestamp": "2025-09-13T15:43:56.852Z",
+  "testResults": [
+    {
+      "name": "Build Verification",
+      "passed": false,
+      "message": "Build failed: Cannot read properties of null (reading '1')",
+      "details": {}
+    },
+    {
+      "name": "Code Structure Analysis",
+      "passed": true,
+      "message": "Code structure valid: 19 files, 0 lines",
+      "details": {
+        "sourceFiles": 19,
+        "totalLines": 0
+      }
+    },
+    {
+      "name": "Model Validation",
+      "passed": false,
+      "message": "Required model fields missing",
+      "details": {}
+    },
+    {
+      "name": "Import Dependencies",
+      "passed": true,
+      "message": "Import dependencies validated, index exports: true",
+      "details": {
+        "requiredImports": [
+          "CustomerUI",
+          "InvoiceUI",
+          "initializeSpreadsheet",
+          "checkSpreadsheetInitialization"
+        ],
+        "hasExports": true
+      }
+    },
+    {
+      "name": "Function Exports",
+      "passed": true,
+      "message": "All required functions exported (100.0% coverage)",
+      "details": {
+        "requiredFunctions": [
+          "onOpen",
+          "testFunction",
+          "runTestsWithLogs",
+          "testSpreadsheetInitialization",
+          "testCustomerManagement",
+          "testInvoiceManagement",
+          "showCustomerList",
+          "showInvoiceList",
+          "showCustomerRegistration",
+          "showInvoiceCreation"
+        ],
+        "exportedFunctions": [
+          "onOpen",
+          "testFunction",
+          "runTestsWithLogs",
+          "testSpreadsheetInitialization",
+          "testCustomerManagement",
+          "testInvoiceManagement",
+          "showCustomerList",
+          "showInvoiceList",
+          "showCustomerRegistration",
+          "showInvoiceCreation"
+        ],
+        "coverage": "100.0"
+      }
+    },
+    {
+      "name": "Configuration Coverage",
+      "passed": true,
+      "message": "Config: true, Env: true, Deps: true, Scripts: true",
+      "details": {
+        "hasConfigManager": true,
+        "hasEnvironments": true,
+        "hasRequiredDeps": true,
+        "hasScripts": true,
+        "dependencies": 11
+      }
+    }
+  ],
+  "totalTests": 6,
+  "passedTests": 4,
+  "failedTests": 2,
+  "summary": {
+    "totalTests": 6,
+    "passed": 4,
+    "failed": 2,
+    "successRate": "66.7"
+  },
+  "generatedAt": "2025-09-13T15:43:58.120Z"
+}

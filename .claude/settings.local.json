@@ -37,7 +37,27 @@
       "Bash(git add:*)",
       "mcp__serena__replace_symbol_body",
       "Bash(npm run lint)",
-      "mcp__serena__create_text_file"
+      "mcp__serena__create_text_file",
+      "Bash(find:*)",
+      "Bash(chmod:*)",
+      "Bash(set GOOGLE_CLOUD_PROJECT=1007727912720)",
+      "Bash(npm run:*)",
+      "Bash(export GOOGLE_CLOUD_PROJECT=gas-invoice-dev)",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp setup-logs)",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp open-api-console)",
+      "Bash(npm view:*)",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp logs --json --limit 50)",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp logs --json)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp logs)",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp logs --json --limit 10)",
+      "mcp__serena__execute_shell_command",
+      "mcp__serena__find_symbol",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp apis list)",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev npm run push:dev)",
+      "Bash(GOOGLE_CLOUD_PROJECT=gas-invoice-dev clasp logs --limit 10)"
     ],
     "deny": []
   }

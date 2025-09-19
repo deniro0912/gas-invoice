@@ -24,7 +24,10 @@
     "test:quick": "node scripts/test-runner.mjs",
     "test:comprehensive": "node scripts/run-comprehensive-test.mjs",
     "test:logs": "node scripts/check-logs.mjs",
-    "logs": "clasp logs"
+    "logs": "clasp logs",
+    "logs:watch": "clasp logs --watch",
+    "logs:json": "clasp logs --json",
+    "logs:simple": "clasp logs --simplified"
   },
   "keywords": [],
   "author": "",

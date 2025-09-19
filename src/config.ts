@@ -182,6 +182,30 @@ export class ConfigManager {
   public reload(): void {
     this.loadConfig();
   }
+
+  /**
+   * 会社情報を取得
+   */
+  public getCompanyInfo(): any {
+    return {
+      name: PropertiesService.getScriptProperties().getProperty('COMPANY_NAME') || '株式会社サンプル',
+      postalCode: PropertiesService.getScriptProperties().getProperty('COMPANY_POSTAL_CODE') || '100-0001',
+      address: PropertiesService.getScriptProperties().getProperty('COMPANY_ADDRESS') || '東京都千代田区千代田1-1',
+      phone: PropertiesService.getScriptProperties().getProperty('COMPANY_PHONE') || '03-1234-5678',
+      email: PropertiesService.getScriptProperties().getProperty('COMPANY_EMAIL') || 'info@example.com',
+      website: PropertiesService.getScriptProperties().getProperty('COMPANY_WEBSITE') || 'https://example.com'
+    };
+  }
+
+  /**
+   * 銀行情報を取得
+   */
+  public getBankInfo(): any {
+    return {
+      details: PropertiesService.getScriptProperties().getProperty('BANK_DETAILS') || 
+              'みずほ銀行 東京支店 普通 1234567 カ)サンプル'
+    };
+  }
 }
 
 /**

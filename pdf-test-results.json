@@ -1,0 +1,74 @@
+{
+  "timestamp": "2025-09-14T14:23:57.292Z",
+  "tests": [
+    {
+      "name": "HTMLテンプレート検証",
+      "status": "passed",
+      "message": "HTMLテンプレート正常",
+      "details": {
+        "fileSize": "6.41KB",
+        "placeholders": 5
+      }
+    },
+    {
+      "name": "PDF生成サービス検証",
+      "status": "passed",
+      "message": "PDF生成サービス正常",
+      "details": {
+        "methods": 7,
+        "singleton": true
+      }
+    },
+    {
+      "name": "Google Docs生成サービス検証",
+      "status": "passed",
+      "message": "Google Docs PDF生成サービス正常",
+      "details": {
+        "googleDocsAPI": true,
+        "templateManagement": true
+      }
+    },
+    {
+      "name": "PDF UI検証",
+      "status": "passed",
+      "message": "PDF生成UI正常",
+      "details": {
+        "dialogs": 2,
+        "eventHandlers": true
+      }
+    },
+    {
+      "name": "メイン関数統合検証",
+      "status": "passed",
+      "message": "メイン統合正常",
+      "details": {
+        "pdfFunctions": 9,
+        "menuIntegration": true
+      }
+    },
+    {
+      "name": "ビルド出力検証",
+      "status": "passed",
+      "message": "ビルド出力正常",
+      "details": {
+        "fileSize": "219.04KB",
+        "pdfFunctions": true,
+        "exportRemoved": true
+      }
+    },
+    {
+      "name": "設定管理統合検証",
+      "status": "passed",
+      "message": "設定統合正常",
+      "details": {
+        "companyInfo": true,
+        "bankInfo": true
+      }
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0
+  }
+}

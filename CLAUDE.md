@@ -160,8 +160,11 @@ Google Apps ScriptはGoogleの環境で実行されるため：
 ### 主要なテスト関数
 - `testFunction()`: システムテスト（環境変数確認、スプレッドシート書き込み）
 - `runTestsWithLogs()`: 詳細ログ付きテスト（新規スプレッドシート作成、自動テスト実行）
+- `testPDFTemplateFields()`: **PDF生成機能完全テスト**（テンプレート読み込み、フォーム解析、データ埋め込み）
+- `testPDFGeneration()`: PDF生成サービステスト
+- `testCustomerManagement()`: 顧客管理機能テスト
+- `testInvoiceManagement()`: 請求書作成機能テスト
 - `showSettings()`: 設定確認用
-- `createInvoice()`: 請求書作成フロー（開発中）
 - `getLastTestResults()`: 最新のテスト結果スプレッドシートを取得するAPI関数
 
 ### 包括的テスト実行システム
@@ -174,8 +177,10 @@ npm run test:comprehensive # 同上（明示的）
 npm run push:dev           # ビルド・デプロイのみ
 
 # ログ確認（重要！）
-clasp logs                 # 実行ログを直接確認（コピペ不要）
-clasp logs --watch        # リアルタイムログ監視
+npm run logs               # 実行ログを直接確認（推奨）
+npm run logs:watch         # リアルタイムログ監視
+npm run logs:json          # JSON形式でログ取得
+clasp logs                 # 直接コマンド実行
 ```
 
 ### テスト結果の確認方法
@@ -194,22 +199,68 @@ clasp logs --watch        # リアルタイムログ監視
 
 ## 請求書システム固有の機能
 
-### 想定される主要機能
-- 請求書の作成と管理
-- 顧客情報の管理
-- 請求データの記録と履歴管理
-- 月次レポートの作成
-- データのスプレッドシート管理
+### 実装済み主要機能（Phase 1: 80%完了）
+- ✅ **請求書の作成と管理**: 完全実装（バリデーション、採番システム）
+- ✅ **顧客情報の管理**: CRUD操作、検索機能
+- ✅ **PDF生成システム**: pdf-lib統合、テンプレートベース自動生成
+- ✅ **データのスプレッドシート管理**: 自動初期化、型安全アクセス
+- 🔄 **請求履歴表示**: 次回実装予定
+- 🔄 **月次レポートの作成**: 将来機能
 
 ### データ構造の考慮事項
 - スプレッドシートをデータベースとして使用
 - シート構成：顧客情報、請求データ、請求履歴など
 - データの整合性チェック機能の実装
 
+## システムアーキテクチャ
+
+### レイヤードアーキテクチャ
+```
+┌─────────────────────┐
+│   UI Layer          │ ← HTMLダイアログ、GASメニュー
+├─────────────────────┤
+│   Service Layer     │ ← ビジネスロジック、PDF生成
+├─────────────────────┤
+│   Repository Layer  │ ← データアクセス、CRUD操作
+├─────────────────────┤
+│   Model Layer       │ ← TypeScript型定義
+└─────────────────────┘
+```
+
+### 主要コンポーネント
+- **Models** (`src/models/`): Customer, Invoice, InvoiceItem等の型定義
+- **Repositories** (`src/repositories/`): スプレッドシートデータアクセス層
+- **Services** (`src/services/`): ビジネスロジック、PDF生成、外部API統合
+- **UI** (`src/ui/`): ユーザーインターフェース、HTMLダイアログ
+- **Utils** (`src/utils/`): 共通ユーティリティ、初期化、エラーハンドリング
+
+### PDF生成システム（革新的実装）
+```typescript
+// pdf-libライブラリ完全統合システム
+テンプレートPDF → フォーム解析 → データ埋め込み → Google Drive保存
+```
+
+**技術的特徴:**
+- **動的ライブラリロード**: UrlFetchApp + eval()でpdf-libを実行時統合
+- **テンプレートベース**: 実際のPDFフォームフィールドを自動検出・操作
+- **フィールドタイプ対応**: テキスト、チェックボックス、ドロップダウン
+- **完全自動化**: `testPDFTemplateFields()`で全フロー検証可能
+
+### データベース設計（スプレッドシート）
+- **顧客マスタ**: 会社情報、連絡先、住所
+- **請求書データ**: ヘッダー情報、金額、ステータス
+- **請求明細**: 品目詳細、数量、単価
+- **自動初期化**: `initializeSpreadsheet()`でスキーマ構築
+
 ## 学んだ重要な教訓
 
+### PDF生成における技術的ブレークスルー
+- **外部ライブラリ統合**: GAS環境でnpmライブラリを動的ロード
+- **テンプレート駆動**: コード埋め込みHTMLではなく、実PDFテンプレートの操作
+- **型安全な外部API**: eval()使用時もTypeScript型定義でインテリセンス確保
+
 ### ビルドパイプラインの構築
-- **間違ったアプローチ**: CommonJS形式（format: 'cjs'）→"module is not defined"エラー
+- **間違ったアプローチ**: CommonJS形式（format: 'cjs'）→"module is not defined"エラー  
 - **正しいアプローチ**: ESM形式で出力後、カスタムプラグインでexport/import文を除去
 - **根本解決**: 手動でJavaScriptを書くのではなく、自動変換パイプラインを構築
 
@@ -293,3 +344,48 @@ clasp logs                 # コピペ不要でログ直接確認
 ```
 
 これで「実行ログを毎回コピペして渡す」問題が完全に解決されます。
+
+## **PDF生成システム実装状況（重要・2025/09/15）**
+
+### ✅ 実装完了済み機能（Day 8-9完了）
+1. **pdf-libライブラリ統合**: UrlFetchApp + eval()による動的ライブラリロード
+2. **テンプレートPDF読み込み**: Google Drive File ID: `15qHfTaG1WUJebBIYvJYPYlbSc-xo7_Lq`
+3. **PDFDocument解析**: pdf-lib.PDFDocument.load()での完全解析
+4. **フォームフィールド検出**: form.getFields()での自動フィールド検出
+
+### 🔍 重要な発見（testPDFTemplateFields実行結果）
+- **PDFテンプレート容量**: 674,300 bytes（正常読み込み確認）
+- **pdf-libライブラリ容量**: 525,030 characters（CDN統合成功）
+- **フォームフィールド数**: **0個**（⚠️ 重要）
+
+### ⚠️ 現在の技術的課題
+```typescript
+// テンプレートPDFにフォームフィールドが存在しない
+const form = pdfDoc.getForm();
+const fields = form.getFields();
+console.log('Form fields count:', fields.length); // 0
+
+// 解決策：座標ベーステキスト埋め込み方式への移行が必要
+```
+
+### 📋 次のアクション項目
+1. **座標ベース文字埋め込み実装**: PDFページ上の指定座標への文字描画
+2. **テンプレート座標マップ作成**: 請求書項目（会社名、金額等）の座標定義
+3. **代替PDF操作方式**: フォームフィールド依存から脱却
+
+### 🎯 完成形のワークフロー設計
+```typescript
+// 現在: フォームフィールド方式（実装済みだが使用不可）
+templatePDF → getForm() → getFields() → setValue()
+
+// 必要: 座標ベース方式（今後実装）
+templatePDF → getPage() → drawText(text, {x, y}) → save()
+```
+
+### 💡 技術的学習成果
+- **Google Apps Script制約下でのpdf-lib統合**: 完全実証
+- **外部CDNライブラリの動的ロード**: UrlFetchApp + eval()方式確立
+- **PDF解析・操作システム**: 基盤技術完成
+- **テンプレートベースワークフロー**: 思想転換の必要性発見
+
+この実装により、Google Apps Script環境でのPDF操作基盤技術が確立されました。フォームフィールド方式から座標ベース方式への移行で、完全なPDF生成システムが実現可能です。

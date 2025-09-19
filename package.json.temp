@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "logs": "cross-env GOOGLE_CLOUD_PROJECT=1007727912720 clasp logs --simplified",
+    "logs-watch": "cross-env GOOGLE_CLOUD_PROJECT=1007727912720 clasp logs --watch"
+  }
+}

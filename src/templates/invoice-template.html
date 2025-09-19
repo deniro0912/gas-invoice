@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      margin: 0;
+      padding: 20mm;
+      box-sizing: border-box;
+    }
+    
+    .invoice-container {
+      width: 100%;
+      max-width: 170mm;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+    }
+    
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .invoice-number {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .date-section {
+      text-align: right;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .customer-section {
+      margin-bottom: 30px;
+    }
+    
+    .customer-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+    
+    .customer-details {
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    
+    .amount-section {
+      background-color: #f5f5f5;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    
+    .total-amount {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .amount-label {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    .items-table th {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      text-align: left;
+      font-size: 12px;
+    }
+    
+    .items-table td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      font-size: 12px;
+    }
+    
+    .items-table .amount-cell {
+      text-align: right;
+    }
+    
+    .subtotal-section {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #333;
+    }
+    
+    .subtotal-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    
+    .subtotal-label {
+      font-weight: normal;
+    }
+    
+    .subtotal-value {
+      font-weight: bold;
+      text-align: right;
+    }
+    
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 2px solid #333;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    
+    .company-section {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+    
+    .company-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .company-details {
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    
+    .stamp-area {
+      width: 60px;
+      height: 60px;
+      border: 1px solid #999;
+      border-radius: 50%;
+      float: right;
+      margin-top: -30px;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #999;
+    }
+    
+    .notes-section {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #fffef0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+    
+    .notes-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .payment-terms {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 10px;
+      color: #999;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="title">請求書</div>
+      <div class="invoice-number">No. {{invoiceNumber}}</div>
+    </div>
+    
+    <!-- Date -->
+    <div class="date-section">
+      発行日: {{issueDate}}
+    </div>
+    
+    <!-- Customer Information -->
+    <div class="customer-section">
+      <div class="customer-name">{{customerName}} 御中</div>
+      <div class="customer-details">
+        {{#if customerAddress}}
+        〒{{customerPostalCode}}<br>
+        {{customerAddress}}
+        {{/if}}
+      </div>
+    </div>
+    
+    <!-- Total Amount -->
+    <div class="amount-section">
+      <div class="amount-label">ご請求金額</div>
+      <div class="total-amount">¥{{totalAmountFormatted}}</div>
+      <div style="text-align: center; font-size: 12px; color: #666;">(税込)</div>
+    </div>
+    
+    <!-- Items Table -->
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th style="width: 50%;">品目</th>
+          <th style="width: 15%;">数量</th>
+          <th style="width: 15%;">単価</th>
+          <th style="width: 20%;">金額</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each items}}
+        <tr>
+          <td>{{description}}</td>
+          <td>{{quantity}} {{unit}}</td>
+          <td class="amount-cell">¥{{unitPriceFormatted}}</td>
+          <td class="amount-cell">¥{{amountFormatted}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    
+    <!-- Subtotal Section -->
+    <div class="subtotal-section">
+      <div class="subtotal-row">
+        <span class="subtotal-label">小計</span>
+        <span class="subtotal-value">¥{{subtotalFormatted}}</span>
+      </div>
+      <div class="subtotal-row">
+        <span class="subtotal-label">消費税（10%）</span>
+        <span class="subtotal-value">¥{{taxAmountFormatted}}</span>
+      </div>
+      <div class="total-row">
+        <span>合計金額</span>
+        <span>¥{{totalAmountFormatted}}</span>
+      </div>
+    </div>
+    
+    <!-- Company Information -->
+    <div class="company-section">
+      <div class="stamp-area">印</div>
+      <div class="company-name">{{companyName}}</div>
+      <div class="company-details">
+        〒{{companyPostalCode}}<br>
+        {{companyAddress}}<br>
+        TEL: {{companyPhone}}<br>
+        {{#if companyEmail}}
+        Email: {{companyEmail}}<br>
+        {{/if}}
+        {{#if companyWebsite}}
+        Web: {{companyWebsite}}
+        {{/if}}
+      </div>
+    </div>
+    
+    <!-- Notes Section -->
+    {{#if notes}}
+    <div class="notes-section">
+      <div class="notes-title">備考</div>
+      <div>{{notes}}</div>
+    </div>
+    {{/if}}
+    
+    <!-- Payment Terms -->
+    <div class="payment-terms">
+      お支払期限: {{paymentDueDate}}<br>
+      振込先: {{bankDetails}}
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      この請求書は電子的に作成されたものです。
+    </div>
+  </div>
+</body>
+</html>
